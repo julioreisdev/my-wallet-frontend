@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import dadosUser from "../Context/ContextUser";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Cadastro() {
   const {
@@ -15,15 +16,44 @@ export default function Cadastro() {
     setConfirmSenha,
   } = useContext(dadosUser);
 
+  let navigate = useNavigate();
+
+  const [senhaFraca, setSenhaFraca] = useState(false);
+  const [senhasConferem, setSenhasConferem] = useState(true);
+  const [avisoEmail, setAvisoEmail] = useState("");
+
+  function submitCadastro(e) {
+    e.preventDefault();
+    if (senha === confirmSenha) {
+      const promise = axios.post("http://localhost:5000/cadastro", {
+        nome,
+        email,
+        senha,
+      });
+      promise
+        .then((res) => {
+          console.log(res.data);
+          navigate("/");
+        })
+        .catch((erro) => {
+          setAvisoEmail(erro.response.data);
+        });
+    }
+  }
+
   return (
-    <Container>
+    <Container
+      corFundoSenha={senhaFraca ? "#F0E68C" : "#fff"}
+      corBordaSenhas={senhasConferem ? "#fff" : "#FA8072"}
+    >
       <Logo>MyWallet</Logo>
-      <form>
+      <form onSubmit={(e) => submitCadastro(e)}>
         <input
           type="text"
           id="nome"
           placeholder="Nome"
           value={nome}
+          required
           onChange={(e) => setNome(e.target.value)}
         />
         <input
@@ -31,22 +61,44 @@ export default function Cadastro() {
           id="email"
           placeholder="E-mail"
           value={email}
+          required
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
+          name="senha"
           id="senha"
           placeholder="Senha"
           value={senha}
-          onChange={(e) => setSenha(e.target.value)}
+          required
+          onChange={(e) => {
+            setSenha(e.target.value);
+            let senhaAtual = e.target.value;
+            if (senhaAtual.length < 6) {
+              setSenhaFraca(true);
+            } else {
+              setSenhaFraca(false);
+            }
+          }}
         />
         <input
           type="password"
           id="confirmSenha"
+          name="confirmeSenha"
           placeholder="Confirme a senha"
           value={confirmSenha}
-          onChange={(e) => setConfirmSenha(e.target.value)}
+          required
+          onChange={(e) => {
+            setConfirmSenha(e.target.value);
+            if (senha !== e.target.value) {
+              setSenhasConferem(false);
+            }
+            if (e.target.value === senha) {
+              setSenhasConferem(true);
+            }
+          }}
         />
+        <p className="aviso-email-cadastrado">{avisoEmail}</p>
         <button>Cadastrar</button>
       </form>
       <LinkCadastro>
@@ -80,6 +132,14 @@ const Container = styled.div`
     }
     input::placeholder {
       color: #333;
+    }
+
+    input[name="senha"] {
+      background-color: ${(props) => props.corFundoSenha} !important;
+    }
+
+    input[name="confirmeSenha"] {
+      background-color: ${(props) => props.corBordaSenhas};
     }
 
     button {

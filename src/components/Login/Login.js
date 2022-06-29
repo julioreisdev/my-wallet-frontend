@@ -1,20 +1,35 @@
 import styled from "styled-components";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import dadosUser from "../Context/ContextUser";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function Login() {
   const { email, setEmail, senha, setSenha } = useContext(dadosUser);
+  let [loginInvalido, setLoginInvalido] = useState(false);
+
+  function submitLogin(e) {
+    e.preventDefault();
+    const promise = axios.post("http://localhost:5000/login", { email, senha });
+    promise
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((erro) => {
+        setLoginInvalido(true);
+      });
+  }
 
   return (
-    <Container>
+    <Container cor={loginInvalido ? "red" : "#fff"}>
       <Logo>MyWallet</Logo>
-      <form>
+      <form onSubmit={(e) => submitLogin(e)}>
         <input
           type="email"
           id="email"
           placeholder="E-mail"
           value={email}
+          required
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
@@ -22,6 +37,7 @@ export default function Login() {
           id="senha"
           placeholder="Senha"
           value={senha}
+          required
           onChange={(e) => setSenha(e.target.value)}
         />
         <button>Entrar</button>
@@ -52,7 +68,7 @@ const Container = styled.div`
       margin-bottom: 0.5rem;
       font-size: 1.4rem;
       color: #000;
-      border: 1px solid #fff;
+      border: 1px solid ${(props) => props.cor};
       border-radius: 5px;
     }
     input::placeholder {

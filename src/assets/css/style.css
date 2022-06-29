@@ -6,9 +6,19 @@
   font-family: "Raleway", sans-serif !important;
 }
 
-.linkCadastro, .linkLogin {
+.linkCadastro,
+.linkLogin {
   color: #fff !important;
   font-size: 1.1rem;
   font-weight: bold;
   text-decoration: none;
+}
+
+button:hover {
+  cursor: pointer !important;
+}
+
+.aviso-email-cadastrado {
+  color: #fff;
+  margin-bottom: 1rem;
 }
