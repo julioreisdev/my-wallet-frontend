@@ -68,7 +68,7 @@ const Container = styled.div`
       margin-bottom: 0.5rem;
       font-size: 1.4rem;
       color: #000;
-      border: 1px solid ${(props) => props.cor};
+      border: 2px solid ${(props) => props.cor};
       border-radius: 5px;
     }
     input::placeholder {

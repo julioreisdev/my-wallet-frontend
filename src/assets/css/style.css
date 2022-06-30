@@ -22,3 +22,19 @@ button:hover {
   color: #fff;
   margin-bottom: 1rem;
 }
+
+.positivo {
+  color: green;
+}
+
+.positivo:before {
+  content: "+";
+}
+
+.negativo {
+  color: red;
+}
+
+.negativo:before {
+  content: "-";
+}
