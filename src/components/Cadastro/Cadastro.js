@@ -121,7 +121,7 @@ export default function Cadastro() {
 }
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   background-color: #8c11be;
   padding: 6rem 1rem 0 1rem;
@@ -176,4 +176,6 @@ const Logo = styled.h1`
 const LinkCadastro = styled.p`
   text-align: center;
   margin: 2rem 0;
+  margin-bottom: 0;
+  padding-bottom: 2rem;
 `;

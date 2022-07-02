@@ -90,7 +90,7 @@ export default function Transacao() {
 }
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   background-color: #8c11be;
   padding: 1.5rem 1rem 1rem 1rem;
