@@ -87,6 +87,7 @@ const Container = styled.div`
       border: 1px solid #a328d6;
       border-radius: 5px;
       background-color: #a328d6;
+      font-weight: bold;
     }
   }
 `;

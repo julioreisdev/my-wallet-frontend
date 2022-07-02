@@ -34,7 +34,3 @@ button:hover {
 .negativo {
   color: red;
 }
-
-.negativo:before {
-  content: "-";
-}

@@ -1,14 +1,16 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import dadosUser from "../Context/ContextUser";
 import axios from "axios";
 
 export default function Dashboard() {
-  const { token } = useContext(dadosUser);
+  const { token, setTipoTransacao } = useContext(dadosUser);
   const [nome, setNome] = useState("");
   const [saldo, setSaldo] = useState();
   const [transacoes, setTransacoes] = useState([]);
+
+  let navigate = useNavigate();
 
   function ItemTransacao(prop) {
     return (
@@ -21,6 +23,16 @@ export default function Dashboard() {
         </p>
       </Item>
     );
+  }
+
+  function saida() {
+    setTipoTransacao("saída");
+    navigate("/transacao");
+  }
+
+  function entrada() {
+    setTipoTransacao("entrada");
+    navigate("/transacao");
   }
 
   const config = {
@@ -65,16 +77,16 @@ export default function Dashboard() {
             <p>{saldo}</p>
           </Saldo>
         </Historico>
-        <SemHistorico opacity={transacoes.length === 0 ? 1 : 0}>
+        <SemHistorico display={transacoes.length === 0 ? "flex" : "none"}>
           <p>Não há registros de entrada ou saída</p>
         </SemHistorico>
       </ContainerHistorico>
       <Operacoes>
-        <BotaoOperacao>
+        <BotaoOperacao onClick={entrada}>
           <ion-icon name="add-circle-outline"></ion-icon>
           <p>Nova entrada</p>
         </BotaoOperacao>
-        <BotaoOperacao>
+        <BotaoOperacao onClick={saida}>
           <ion-icon name="remove-circle-outline"></ion-icon>
           <p>Nova saída</p>
         </BotaoOperacao>
@@ -112,7 +124,7 @@ const Historico = styled.div`
   border-radius: 5px;
   padding: 1rem;
   background-color: #fdfdfd;
-  overflow-y: scroll;
+  overflow-y: scroll !important;
   opacity: ${(props) => props.opacity};
 `;
 
@@ -124,10 +136,9 @@ const SemHistorico = styled.div`
   background-color: #fdfdfd;
   position: absolute;
   top: 0;
-  display: flex;
+  display: ${(props) => props.display};
   justify-content: center;
   align-items: center;
-  opacity: ${(props) => props.opacity};
 
   p {
     width: 85%;
@@ -196,7 +207,7 @@ const BotaoOperacao = styled.div`
   font-weight: bold;
 
   p {
-    width: 50%;
+    width: 45%;
     margin-top: 0.8rem;
   }
 `;
