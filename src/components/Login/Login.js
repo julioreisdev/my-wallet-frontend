@@ -1,19 +1,22 @@
 import styled from "styled-components";
 import { useContext, useState } from "react";
 import dadosUser from "../Context/ContextUser";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Login() {
-  const { email, setEmail, senha, setSenha } = useContext(dadosUser);
+  const { email, setEmail, senha, setSenha, setToken } = useContext(dadosUser);
   let [loginInvalido, setLoginInvalido] = useState(false);
+
+  let navigate = useNavigate();
 
   function submitLogin(e) {
     e.preventDefault();
     const promise = axios.post("http://localhost:5000/login", { email, senha });
     promise
       .then((res) => {
-        console.log(res.data);
+        setToken(res.data);
+        navigate("/dashboard");
       })
       .catch((erro) => {
         setLoginInvalido(true);

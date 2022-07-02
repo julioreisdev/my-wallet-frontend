@@ -12,6 +12,7 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmSenha, setConfirmSenha] = useState("");
+  const [token, setToken] =  useState("");
 
   return (
     <BrowserRouter>
@@ -25,6 +26,8 @@ export default function App() {
           setSenha,
           confirmSenha,
           setConfirmSenha,
+          token,
+          setToken
         }}
       >
         <Routes>

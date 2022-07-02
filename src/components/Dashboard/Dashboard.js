@@ -1,34 +1,73 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import dadosUser from "../Context/ContextUser";
+import axios from "axios";
 
 export default function Dashboard() {
+  const { token } = useContext(dadosUser);
+  const [nome, setNome] = useState("");
+  const [saldo, setSaldo] = useState();
+  const [transacoes, setTransacoes] = useState([]);
+
+  function ItemTransacao(prop) {
+    return (
+      <Item>
+        <p>
+          <span>{prop.data}</span> {prop.desc}
+        </p>
+        <p className={prop.valor >= 0 ? "positivo" : "negativo"}>
+          {prop.valor}
+        </p>
+      </Item>
+    );
+  }
+
+  const config = {
+    headers: {
+      token: `Bearer ${token.token}`,
+    },
+  };
+
+  useEffect(() => {
+    const promise = axios.get("http://localhost:5000/transacoes", config);
+    promise
+      .then((res) => {
+        setNome(res.data.usuario.nome);
+        setSaldo(res.data.usuario.saldo);
+        setTransacoes(res.data.transacoes);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <Container>
       <Header>
-        <h1>Olá, Júlio Cezar</h1>
+        <h1>Olá, {nome}!</h1>
         <Link to="/">
           <ion-icon name="exit-outline"></ion-icon>
         </Link>
       </Header>
       <ContainerHistorico>
-        <Historico>
-          <Item>
-            <p>
-              <span>11/11/20</span> Desc
-            </p>
-            <p className="positivo">valor</p>
-          </Item>
-          <Item>
-            <p>
-              <span>11/11/20</span> Desc
-            </p>
-            <p className="negativo">valor</p>
-          </Item>
-          <Saldo>
+        <Historico opacity={transacoes.length === 0 ? 0 : 1}>
+          {transacoes.map((t, index) => (
+            <ItemTransacao
+              key={index}
+              data={t.data}
+              desc={t.desc}
+              valor={t.valor}
+            ></ItemTransacao>
+          ))}
+          <Saldo cor={saldo >= 0 ? "green" : "red"}>
             <h4>Saldo:</h4>
-            <p>0</p>
+            <p>{saldo}</p>
           </Saldo>
         </Historico>
+        <SemHistorico opacity={transacoes.length === 0 ? 1 : 0}>
+          <p>Não há registros de entrada ou saída</p>
+        </SemHistorico>
       </ContainerHistorico>
       <Operacoes>
         <BotaoOperacao>
@@ -46,7 +85,7 @@ export default function Dashboard() {
 
 const Container = styled.div`
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #8c11be;
   padding: 1.5rem 1rem 1rem 1rem;
 `;
@@ -74,6 +113,28 @@ const Historico = styled.div`
   padding: 1rem;
   background-color: #fdfdfd;
   overflow-y: scroll;
+  opacity: ${(props) => props.opacity};
+`;
+
+const SemHistorico = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  padding: 1rem;
+  background-color: #fdfdfd;
+  position: absolute;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: ${(props) => props.opacity};
+
+  p {
+    width: 85%;
+    text-align: center;
+    font-size: 1.3rem;
+    color: gray;
+  }
 `;
 
 const Item = styled.div`
@@ -88,7 +149,7 @@ const Item = styled.div`
 
 const ContainerHistorico = styled.div`
   width: 100%;
-  height: 70%;
+  height: 68vh;
   margin: 1rem 0;
   position: relative;
 `;
@@ -112,6 +173,8 @@ const Saldo = styled.div`
   p {
     color: #333;
     font-size: 1.1rem;
+    color: ${(props) => props.cor};
+    font-weight: bold;
   }
 `;
 
