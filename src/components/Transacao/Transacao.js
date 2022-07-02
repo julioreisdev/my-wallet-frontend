@@ -8,7 +8,6 @@ export default function Transacao() {
   const { tipoTransacao, token } = useContext(dadosUser);
 
   const [valor, setValor] = useState(0);
-  const [valorAux, setValorAux] = useState();
   const [desc, setDesc] = useState("");
 
   let navigate = useNavigate();
@@ -60,6 +59,7 @@ export default function Transacao() {
           id="valor"
           placeholder="Valor"
           type="number"
+          required
           value={valor === 0 ? "" : valor}
           onChange={(e) => setValor(Math.abs(e.target.value))}
         ></input>
@@ -67,6 +67,7 @@ export default function Transacao() {
           id="descricao"
           placeholder="Descrição"
           type="text"
+          required
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
         ></input>
