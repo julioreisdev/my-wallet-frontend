@@ -42,7 +42,10 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const promise = axios.get("http://localhost:5000/transacoes", config);
+    const promise = axios.get(
+      "https://mywalletbackendapi.herokuapp.com/transacoes",
+      config
+    );
     promise
       .then((res) => {
         setNome(res.data.usuario.nome);

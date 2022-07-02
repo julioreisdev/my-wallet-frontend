@@ -3,22 +3,29 @@ import { useContext, useState } from "react";
 import dadosUser from "../Context/ContextUser";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import LoaderBotao from "../Loader/LoaderBotao";
 
 export default function Login() {
   const { email, setEmail, senha, setSenha, setToken } = useContext(dadosUser);
   let [loginInvalido, setLoginInvalido] = useState(false);
+  const [sendLogin, setSendLogin] = useState(false);
 
   let navigate = useNavigate();
 
   function submitLogin(e) {
     e.preventDefault();
-    const promise = axios.post("http://localhost:5000/login", { email, senha });
+    setSendLogin(true);
+    const promise = axios.post(
+      "https://mywalletbackendapi.herokuapp.com/login",
+      { email, senha }
+    );
     promise
       .then((res) => {
         setToken(res.data);
         navigate("/dashboard");
       })
       .catch((erro) => {
+        setSendLogin(false);
         setLoginInvalido(true);
       });
   }
@@ -43,7 +50,7 @@ export default function Login() {
           required
           onChange={(e) => setSenha(e.target.value)}
         />
-        <button>Entrar</button>
+        <button>{sendLogin ? <LoaderBotao w="40" h="20" /> : "Entrar"}</button>
       </form>
       <LinkCadastro>
         <Link className="linkCadastro" to="/cadastro">

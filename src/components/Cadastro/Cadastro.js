@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import dadosUser from "../Context/ContextUser";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import LoaderBotao from "../Loader/LoaderBotao";
 
 export default function Cadastro() {
   const {
@@ -22,20 +23,27 @@ export default function Cadastro() {
   const [senhasConferem, setSenhasConferem] = useState(true);
   const [avisoEmail, setAvisoEmail] = useState("");
 
+  const [sendCadastro, setSendCadastro] = useState(false);
+
   function submitCadastro(e) {
     e.preventDefault();
+    setSendCadastro(true);
     if (senha === confirmSenha) {
-      const promise = axios.post("http://localhost:5000/cadastro", {
-        nome,
-        email,
-        senha,
-      });
+      const promise = axios.post(
+        "https://mywalletbackendapi.herokuapp.com/cadastro",
+        {
+          nome,
+          email,
+          senha,
+        }
+      );
       promise
         .then((res) => {
           console.log(res.data);
           navigate("/");
         })
         .catch((erro) => {
+          setSendCadastro(false);
           setAvisoEmail(erro.response.data);
         });
     }
@@ -99,7 +107,9 @@ export default function Cadastro() {
           }}
         />
         <p className="aviso-email-cadastrado">{avisoEmail}</p>
-        <button>Cadastrar</button>
+        <button>
+          {sendCadastro ? <LoaderBotao w="40" h="20" /> : "Cadastrar"}
+        </button>
       </form>
       <LinkCadastro>
         <Link className="linkLogin" to="/">

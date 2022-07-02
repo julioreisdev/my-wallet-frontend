@@ -3,12 +3,15 @@ import dadosUser from "../Context/ContextUser";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import LoaderBotao from "../Loader/LoaderBotao";
 
 export default function Transacao() {
   const { tipoTransacao, token } = useContext(dadosUser);
 
   const [valor, setValor] = useState(0);
   const [desc, setDesc] = useState("");
+
+  const [sendTransacao, setSendTransacao] = useState(false);
 
   let navigate = useNavigate();
 
@@ -21,17 +24,19 @@ export default function Transacao() {
   function submit(e) {
     e.preventDefault();
 
+    setSendTransacao(true);
+
     let promise;
 
     if (tipoTransacao === "saída") {
       promise = axios.post(
-        "http://localhost:5000/transacao",
+        "https://mywalletbackendapi.herokuapp.com/transacao",
         { desc, valor: -valor },
         config
       );
     } else {
       promise = axios.post(
-        "http://localhost:5000/transacao",
+        "https://mywalletbackendapi.herokuapp.com/transacao",
         { desc, valor },
         config
       );
@@ -42,6 +47,7 @@ export default function Transacao() {
         navigate("/dashboard");
       })
       .catch((err) => {
+        setSendTransacao(false);
         console.log(err);
       });
   }
@@ -71,7 +77,13 @@ export default function Transacao() {
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
         ></input>
-        <button>Salvar {tipoTransacao}</button>
+        <button>
+          {sendTransacao ? (
+            <LoaderBotao w="40" h="20" />
+          ) : (
+            `Salvar ${tipoTransacao}`
+          )}
+        </button>
       </form>
     </Container>
   );
